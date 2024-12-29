@@ -7,8 +7,8 @@ import {generateSigner, keypairIdentity, percentAmount} from "@metaplex-foundati
 const connection = new Connection(clusterApiUrl("devnet"));
 const user = await getKeypairFromFile();
 console.log("loaded user", user.publicKey.toBase58());
-// await airdropIfRequired(
-//     connection, user.publicKey, 1 * LAMPORTS_PER_SOL, 0.5 * LAMPORTS_PER_SOL);
+await airdropIfRequired(
+     connection, user.publicKey, 1 * LAMPORTS_PER_SOL, 0.5 * LAMPORTS_PER_SOL);
 
 // console.log("latest blockhash:", await connection.getLatestBlockhash());
 

@@ -42,7 +42,7 @@ import {
   console.log("Set up Umi instance for user");
   
   const collectionAddress = publicKey(
-    "ChfGtd2wT12c2u82PHNpe4PdQ5PMqJnVECfaNbQ2uaVw"
+    "GdrdhUvtAhhKFGKH1Ny2nas34V4nRG2UgHs5G4Sk4xKg"
   );
   
   console.log(`Creating NFT...`);

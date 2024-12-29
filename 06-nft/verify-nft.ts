@@ -38,10 +38,10 @@ import {
   
   // We could also dp
   const collectionAddress = publicKey(
-    "ChfGtd2wT12c2u82PHNpe4PdQ5PMqJnVECfaNbQ2uaVw"
+    "GdrdhUvtAhhKFGKH1Ny2nas34V4nRG2UgHs5G4Sk4xKg"
   );
   
-  const nftAddress = publicKey("84uZmnRpzfa77w3KtyagjWXA8g1yE6vP8ReuHyN5HZaN");
+  const nftAddress = publicKey("3hiQDQ2nnCouSzhrxQgqs6Q9XHF4dg6DjRVQFv5wQggi");
   
   const transaction = await verifyCollectionV1(umi, {
     metadata: findMetadataPda(umi, { mint: nftAddress }),
@@ -49,7 +49,7 @@ import {
     authority: umi.identity,
   });
   
-  transaction.sendAndConfirm(umi);
+  await transaction.sendAndConfirm(umi);
   
   const link = getExplorerLink(
     "address",
