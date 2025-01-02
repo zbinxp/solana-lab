@@ -6,8 +6,8 @@
 - ATA: associated token program, a special PDA, derived from (owner's address, mint's address, and token program id), used as a medium during a transfer
 - Alice: the maker
 - Bob: the taker
-- token A: 
-- token B:
+- token A: represented by a mint account, is a specific type of token, e.g. USD 
+- token B: another token, e.g. EUR
 - Alice's token A account: account is need to store the token, it's not a PDA
 - Alice's token B account
 - Bob's token A account
