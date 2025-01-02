@@ -6,7 +6,7 @@ use anchor_spl::token_interface::{
 pub fn transfer_tokens<'info>(
     from: &InterfaceAccount<'info, TokenAccount>,
     to: &InterfaceAccount<'info, TokenAccount>,
-    amount: &u64,
+    amount: u64,
     mint: &InterfaceAccount<'info, Mint>,
     authority: &Signer<'info>,
     token_program: &Interface<'info, TokenInterface>,
@@ -20,5 +20,5 @@ pub fn transfer_tokens<'info>(
 
     let cpi_context = CpiContext::new(token_program.to_account_info(), transfer_accounts_options);
 
-    transfer_checked(cpi_context, *amount, mint.decimals)
+    transfer_checked(cpi_context, amount, mint.decimals)
 }
