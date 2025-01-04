@@ -1,94 +1,15 @@
 # vesting
 
-## Getting Started
+I find that just following the [video on youtube](https://www.youtube.com/watch?v=amAq-WHAFs8) would not make your test cases compile. Changes need to be made about jest config and typescript config.
 
-### Prerequisites
+## steps 
 
-- Node v18.18.0 or higher
+1. create the project via `npx create-solana-dapp`
+2. navigate to anchor folder, update `cargo.toml`, write your rust code in `lib.rs`, and use `anchor build` to compile your code. It works well
+3. since we're using bankrun to make the test code simpler, we must install the packages: `solana-bankrun`, `anchor-bankrun`, and `spl-token-bankrun@0.2.5`(version matters, otherwise may cause conflicts).
+4. initialize your jest config via `npx ts-jest config:init`, be sure to add `preset: 'ts-jest',`. This make jest cope with ts
+5. copy the tsconfig*.json files in the root folder and the `anchor` folder
+6. now write your test code inside the `tests` folder
+7. run the test using either `npx jest` or `anchor test`
 
-- Rust v1.77.2 or higher
-- Anchor CLI 0.30.1 or higher
-- Solana CLI 1.18.17 or higher
-
-### Installation
-
-#### Clone the repo
-
-```shell
-git clone <repo-url>
-cd <repo-name>
-```
-
-#### Install Dependencies
-
-```shell
-pnpm install
-```
-
-#### Start the web app
-
-```
-pnpm dev
-```
-
-## Apps
-
-### anchor
-
-This is a Solana program written in Rust using the Anchor framework.
-
-#### Commands
-
-You can use any normal anchor commands. Either move to the `anchor` directory and run the `anchor` command or prefix the command with `pnpm`, eg: `pnpm anchor`.
-
-#### Sync the program id:
-
-Running this command will create a new keypair in the `anchor/target/deploy` directory and save the address to the Anchor config file and update the `declare_id!` macro in the `./src/lib.rs` file of the program.
-
-You will manually need to update the constant in `anchor/lib/basic-exports.ts` to match the new program id.
-
-```shell
-pnpm anchor keys sync
-```
-
-#### Build the program:
-
-```shell
-pnpm anchor-build
-```
-
-#### Start the test validator with the program deployed:
-
-```shell
-pnpm anchor-localnet
-```
-
-#### Run the tests
-
-```shell
-pnpm anchor-test
-```
-
-#### Deploy to Devnet
-
-```shell
-pnpm anchor deploy --provider.cluster devnet
-```
-
-### web
-
-This is a React app that uses the Anchor generated client to interact with the Solana program.
-
-#### Commands
-
-Start the web app
-
-```shell
-pnpm dev
-```
-
-Build the web app
-
-```shell
-pnpm build
-```
+Good lunck!
