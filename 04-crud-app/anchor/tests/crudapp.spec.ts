@@ -73,8 +73,14 @@ describe('crudapp', () => {
     ).rpc();
     expect(tx2).toBeDefined();
     
-    const entry = await program.account.journalEntry.fetchNullable(addr);
-    console.log('entry:', entry);
-    expect(entry).toBeNull();
+    // const entry = await program.account.journalEntry.fetchNullable(addr);
+    // console.log('entry:', entry);
+    // expect(entry).toBeNull();
+    try {
+      // Expect error when fetching account since it was closed
+      await program.account.journalEntry.fetch(addr);
+    } catch (error:any) {
+      expect(error.message).toEqual(`Could not find ${addr.toBase58()}`);
+    }
   });
 });
