@@ -1,7 +1,7 @@
 // No imports needed: web3, anchor, pg and more are globally available
 import * as anchor from "@coral-xyz/anchor";
 import { BankrunProvider } from "anchor-bankrun";
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { TOKEN_PROGRAM_ID, getAssociatedTokenAddress, getAccount } from "@solana/spl-token";
 import { BN, Program } from "@coral-xyz/anchor";
 
 import {
@@ -23,7 +23,7 @@ describe("Vesting Smart Contract Tests", () => {
   const companyName = "Company";
   let beneficiary: Keypair;
   let vestingAccountKey: PublicKey;
-  let treasuryTokenAccount: PublicKey;
+  let treasuryTokenAccountKey: PublicKey;
   let employeeAccount: PublicKey;
   let provider: BankrunProvider;
   let program: Program<Vesting>;
@@ -79,7 +79,7 @@ describe("Vesting Smart Contract Tests", () => {
       program.programId
     );
 
-    [treasuryTokenAccount] = PublicKey.findProgramAddressSync(
+    [treasuryTokenAccountKey] = PublicKey.findProgramAddressSync(
       [Buffer.from("vesting_treasury"), Buffer.from(companyName)],
       program.programId
     );
@@ -92,6 +92,8 @@ describe("Vesting Smart Contract Tests", () => {
       ],
       program.programId
     );
+    console.log('vesting account pda:', vestingAccountKey);
+    console.log('treasury account pda:', treasuryTokenAccountKey);
   });
 
   it("should create a vesting account", async () => {
@@ -109,11 +111,11 @@ describe("Vesting Smart Contract Tests", () => {
       "confirmed"
     );
     console.log(
-      "Vesting Account Data:",
-      JSON.stringify(vestingAccountData, null, 2)
+      "Vesting Account Data:",vestingAccountData
     );
 
     console.log("Create Vesting Account Transaction Signature:", tx);
+
   });
 
   it("should fund the treasury token account", async () => {
@@ -123,7 +125,7 @@ describe("Vesting Smart Contract Tests", () => {
       banksClient,
       employer,
       mint,
-      treasuryTokenAccount,
+      treasuryTokenAccountKey,
       employer,
       amount
     );
@@ -133,7 +135,7 @@ describe("Vesting Smart Contract Tests", () => {
 
   it("should create an employee vesting account", async () => {
     const tx2 = await program.methods
-      .createEmployeeAccount(new BN(0), new BN(100), new BN(100), new BN(0))
+      .createEmployeeAccount(new BN(0), new BN(100), new BN(100 * 10 ** 9), new BN(0))
       .accounts({
         beneficiary: beneficiary.publicKey,
         vestingAccount: vestingAccountKey,
@@ -163,10 +165,29 @@ describe("Vesting Smart Contract Tests", () => {
     const tx3 = await program2.methods
       .claimTokens(companyName)
       .accounts({
+        // todo: why other fields don't need to pass
         tokenProgram: TOKEN_PROGRAM_ID,
       })
       .rpc({ commitment: "confirmed" });
 
     console.log("Claim Tokens transaction signature", tx3);
+
+    // check that the ATA account hold all the treasury
+    const associatedTokenAddress = await getAssociatedTokenAddress(
+        mint,           // Token mint address
+        beneficiary.publicKey,          // Owner's public key
+        false,                   // Whether the account should be associated or not (usually false)
+        TOKEN_PROGRAM_ID,        // The Token Program ID (SPL Token Program)
+    );
+    console.log('ata:', associatedTokenAddress);
+    // get spl token account
+    const tokenAccountInfo = await getAccount(provider.connection, associatedTokenAddress);
+    console.log('token account:', tokenAccountInfo);
+
+    const employeeData = await program.account.employeeData.fetch(
+        employeeAccount
+    );
+    expect(employeeData.totalAmount.toNumber()).toEqual(employeeData.totalWithdrawn.toNumber());
+    expect(tokenAccountInfo.amount).toEqual(BigInt(employeeData.totalWithdrawn.toString()));
   });
 });
